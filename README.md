@@ -5,18 +5,24 @@
   2021314078 배은지
 </p>
 
+본 과제는 gradient-domain processing 을 하고자 하며, 그 중에서도 particular Poisson blending 에 중심을 두었다
+Poisson blending은 아래 수식을 통해 공식화 할 수 있다.
+
+
 $$v=\underset{v}{argmax}\sum ((v_i-v_j)-(s_i-s_j))^2+\sum ((v_i-t_j)-(s_i-s_j))^2$$
 
 ### TOY PROBLEM
-- Load the video file
-- extract frames
-- convert double-precision in the range [0,1]
-- convert YIQ color space (RGB ↔ YIQ : rgb2ntsc ↔ ntsc2rgb)
+먼저 gradient domain processing 을 구현하였다.
+이미지 s의 x와 y 그래디언트를 계산한 후 이 값들을 이용해 이미지 v를 재구성하였을 때, 재구성된 이미지와 원본 이미지가 일치하기를 원한다.
+이를 위해 다음과 같은 과정을 진행하였다.
 
-<p align='center'>
-  <img src='./image/2.PNG' width="400px">
-  <img src='./image/1.PNG' width="600px">
-</p>
+1. Minimize $((v(x+1,y)-v(x,y))-(s(x+1,y)-s(x,y)))^2$
+2. Minimize $((v(x,y+1)-v(x,y))-(s(x,y+1)-s(x,y)))^2$
+3. Minimize $(v(1,1)-s(1,1))^2$
+
+이를 하나의 최소 제곱 문제 (Av-b)^2 로 결합한다.
+
+여기서 A는 sparse matrix, v는 variables , b는 known vector 이다.
 
 ```matlab
 video = VideoReader('data/baby2.mp4');
@@ -46,6 +52,11 @@ frame = rgb2ntsc(frame);
 frame_list(:, :, :, frame_index) = frame(:, :, :);
 [h, w, ch, frame_num] = size(frame_list);
 ```
+
+<p align='center'>
+  <img src='./image/2.PNG' width="400px">
+  <img src='./image/1.PNG' width="600px">
+</p>
 
 ### POISSON BLENDING
 - 모든 단일 프레임에 대해 laplacian pyramid 구성
