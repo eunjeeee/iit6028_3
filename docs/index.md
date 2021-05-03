@@ -5,10 +5,14 @@
   2021314078 배은지
 </p>
 
-본 과제는 gradient-domain processing 을 하고자 하며, 그 중에서도 particular Poisson blending 에 중심을 두었다
+본 과제는 두 이미지를 자연스럽게 합성해 주는 seamless blending 기술에 대해 이야기한다.
+
+gradient-domain processing 을 하고자 하며, 그 중에서도 particular Poisson blending 에 중심을 두었다
 Poisson blending은 아래 수식을 통해 공식화 할 수 있다.
 
 <img src="http://latex.codecogs.com/png.latex?\dpi{150}\bg_white  {v=\underset{v}{argmax}\sum ((v_i-v_j)-(s_i-s_j))^2+\sum ((v_i-t_j)-(s_i-s_j))^2}"/>
+
+Poisson blending은 합치고자 하는 두 이미지에서 source 이미지에 mask를 설정한 뒤 배경 이미지에 붙이면 주변 환경색에 따라 색 변화를 줘 이질감을 줄여주는 방식이다. 
 
 ## TOY PROBLEM
 먼저 gradient domain processing 을 구현하였다.
