@@ -140,6 +140,9 @@ im_blend = reshape(v, [imh, imw, nn]);
 im_blend(:,:,:) = max(0, im_blend(:,:,:));
 im_blend(:,:,:) = min(1, im_blend(:,:,:));
 ```
+<p align='center'>
+  <img src='./result/3.PNG' width="500px">
+</p>
 
 ### YOUR OWN EXAMPLES
 
