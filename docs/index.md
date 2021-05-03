@@ -143,7 +143,11 @@ im_blend(:,:,:) = min(1, im_blend(:,:,:));
 
 
 ### BONUS: IMPLEMENT A DIFFERENT GRADIENT-DOMAIN PROCESSING ALGORITHM
-먼저 ```rgb2hsv``` 함수를 이용하여 HSV 값을 추출하였다.
+칼라 이미지를 흑백 스케일로 변환할 때, 데이터가 손상될 가능성이 높다.
+예로써 아래 colorBlindTest용 이미지를 가지고 `rgb2gray` 한 결과와 비교해보았다.
+단순히 흑백 변환을 하였을 경우, 숫자를 나타내는 데이터가 사라지기 때문에 이를 유지하기 위해 아래와 같은 과정을 통해 변환하였다.
+
+이를 위해 ```rgb2hsv``` 함수를 이용하여 이미지를 HSV 공간으로 변환함으로써 각 채널의 gradient 값을 일부 유지시키고자 하였다.
 ```matlab
 im_hsv = rgb2hsv(im_rgb);
 im_s1 = im_hsv(:, :, 1);
@@ -182,7 +186,3 @@ end
 <p align='center'>
   <img src='./result/gray.PNG' width="500px">
 </p>
-
-
-### RESULT
-
