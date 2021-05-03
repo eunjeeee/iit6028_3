@@ -145,9 +145,11 @@ im_blend(:,:,:) = min(1, im_blend(:,:,:));
 </p>
 
 ### YOUR OWN EXAMPLES
+성공 사례
 <p align='center'>
   <img src='./result/4_1.PNG' width="800px">
 </p>
+실패 사례
 <p align='center'>
   <img src='./result/4_2.PNG' width="800px">
 </p>
