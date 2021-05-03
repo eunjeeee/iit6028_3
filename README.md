@@ -144,7 +144,6 @@ im_blend(:,:,:) = min(1, im_blend(:,:,:));
 
 
 ### BONUS: IMPLEMENT A DIFFERENT GRADIENT-DOMAIN PROCESSING ALGORITHM
--Laplacian pyramid를 프레임 당 단일 이미지로 축소
 먼저 ```rgb2hsv``` 함수를 이용하여 HSV 값을 추출하였다.
 ```matlab
 im_hsv = rgb2hsv(im_rgb);
@@ -183,8 +182,4 @@ end
 ```
 
 ### RESULT
-- 아기의 호흡과 사람 피부의 미묘한 움직임을 더 잘 확인할 수 있음
-<p align='center'>
-  <img src='./image/baby2.gif' width="600px">
-  <img src='./image/face.gif' width="300px">
-</p>
+
