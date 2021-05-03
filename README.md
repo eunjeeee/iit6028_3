@@ -74,7 +74,7 @@ im_out = reshape(v, imh, imw);
 다음으로 poisson blending 시킨 결과를 보고자 하였다.
 여기에는 세가지 과정이 필요하다.
 1. 합성될 이미지에서의 영역 경계 선택 및 배경이 될 이미지에서의 위치 지정
-2. $v=\underset{v}{argmax}\sum ((v_i-v_j)-(s_i-s_j))^2+\sum ((v_i-t_j)-(s_i-s_j))^2$ 공식화
+2. <img src="http://latex.codecogs.com/png.latex?\dpi{100}\bg_white  {v=\underset{v}{argmax}\sum ((v_i-v_j)-(s_i-s_j))^2+\sum ((v_i-t_j)-(s_i-s_j))^2}"/> 공식화
 3. 2번 결과를 이미지로 복사
 
 제공된 getMask, alignSource 함수를 이용하여 1번 과정을 쉽게 할 수 있었으며, 그 이후의 과정을 라플라스 변환을 활용하여 구현하였다.
