@@ -106,113 +106,80 @@ im_blend = reshape(v, [imh, imw, nn]);
 </p>
 
 ### BLENDING WITH MIXED GRADIENTS
-- fft(Fast Fourier Transform) 을 사용하여 주파수 영역으로 변환
-- 이 신호에 대역 통과 필터 적용
-- 이 비디오에 적합한 필터를 찾아야 함
-
+이 과정에서는 Poisson blending과 거의 동일하지만, 이미지들의 gradient를 더 큰 magnitude로 사용하여 최소 제곱 문제를 해결하고자 하였다.
+여기서 d_ij는 gradients 중 magnitude가 가장 큰 값이다.
 ```matlab
-[h, w, ch, frame_num] = size(frame_list);
-f = Fs * (0:(fix(frame_num/2)))/frame_num;
-
-cube_fft = zeros(fix(frame_num/2)+1, 1);
-cube_pixel = zeros(frame_num, 1);
-
-for i = 1:h
-    for j = 1:w
-        cube_pixel(:,1) = gaussian_0(i,j,1,:);
-        fftx = fft(cube_pixel);
-        
-        P2 = abs(fftx/frame_num);
-        P1 = P2(1:fix(frame_num/2)+1);
-        P1(2:end-1) = 2*P1(2:end-1);
-        cube_fft(:,1) = cube_fft(:,1) + P1(:,1);
-    end
-end
-```
-
-### YOUR OWN EXAMPLES
-- 제공된 butterworthBandpassFilter 함수 사용 → 주파수 증폭 후 결과를 원래 신호에 다시 추가
-- 동영상의 주파수 대역을 분석해 주파수 대역의 초점을 맞춤
-  - baby 동영상의 경우 First Cutoff Frequency = 0.8, Second Cutoff Frequency = 1 로 설정
-  - face 동영상의 경우 First Cutoff Frequency = 0.6, Second Cutoff Frequency = 0.7 로 설정
- 
-```matlab
-bp = butterworthBandpassFilter(Fs, 256, 0.83, 1);
-
-residual_0_filtered = filter_cube(bp, gaussian_0);
-residual_1_filtered = filter_cube(bp, gaussian_1);
-residual_2_filtered = filter_cube(bp, gaussian_2);
-residual_3_filtered = filter_cube(bp, gaussian_3);
-gaussian_4_filtered = filter_cube(bp, gaussian_4);
-
-clear('bp');
-```
-
-```matlab
-function cube_filtered = filter_cube(bp, cube)
-    [height, width, ch, frame_count] = size(cube);
-
-    cube_filtered = zeros(height, width, ch, frame_count);
-    cube_pixel = zeros(frame_count, 1);
-    
-    Hd_fft = freqz(bp, frame_count);
-
-    for i = 1: height
-        for j = 1: width
-            cube_pixel(:,1) = cube(i,j,1,:);
-            cube_pixel_fft = fft(cube_pixel);
-            cube_pixel_filtered = abs(ifft(cube_pixel_fft .* Hd_fft));
-            cube_filtered(i,j,1,:) = cube_pixel_filtered(:, 1);
+for y = 1:imh
+    for x = 1:imw
+        e = e+1;
+        if mask_s(y,x) == 1
+            A(e, im2var(y,x)) = 4;
+            A(e, im2var(y,x-1)) = -1;
+            A(e, im2var(y,x+1)) = -1;
+            A(e, im2var(y-1,x)) = -1;
+            A(e, im2var(y+1,x)) = -1;
+            grad_s(1,:) = 4*im_s(y,x,:)-im_s(y,x-1,:)-im_s(y,x+1,:)-im_s(y-1,x,:)-im_s(y+1,x,:);
+            grad_t(1,:) = 4*im_background(y,x,:)-im_background(y,x-1,:)-im_background(y,x+1,:)-im_background(y-1,x,:)-im_background(y+1,x,:);       
+            if abs(grad_s(1,:)) >= abs(grad_t(1,:))
+                b(e, :) = grad_s(1,:);
+            else
+                b(e, :) = grad_t(1,:);
+            end
+        else
+            A(e, im2var(y,x)) = 1;
+            b(e, :) = im_background(y,x,:);
         end
     end
 end
 ```
 
+```matlab
+v = A \ b;
+im_blend = reshape(v, [imh, imw, nn]);
+im_blend(:,:,:) = max(0, im_blend(:,:,:));
+im_blend(:,:,:) = min(1, im_blend(:,:,:));
+```
+
+### YOUR OWN EXAMPLES
+
+
+
 ### BONUS: IMPLEMENT A DIFFERENT GRADIENT-DOMAIN PROCESSING ALGORITHM
 -Laplacian pyramid를 프레임 당 단일 이미지로 축소
-
+먼저 ```rgb2hsv``` 함수를 이용하여 HSV 값을 추출하였다.
 ```matlab
-frame_list_reconstructed = zeros(h, w, ch, frame_num);
-alpha_0 = 100;
-alpha_1 = 100;
-alpha_2 = 100;
-alpha_3 = 100;
-alpha_4 = 100;
-
-image_residual_0_re = zeros(size(residual_0_filtered,1), size(residual_0_filtered,2), ch); % re means reconstructed
-image_residual_1_re = zeros(size(residual_1_filtered,1), size(residual_1_filtered,2), ch);
-image_residual_2_re = zeros(size(residual_2_filtered,1), size(residual_2_filtered,2), ch);
-image_residual_3_re = zeros(size(residual_3_filtered,1), size(residual_3_filtered,2), ch);
-image_gaussian_4_re = zeros(size(gaussian_4_filtered,1), size(gaussian_4_filtered,2), ch);
-
-for t = 1: frame_num
-
-    image_residual_0_re(:,:,1) = residual_0_filtered(:,:,1,t);
-    image_residual_1_re(:,:,1) = residual_1_filtered(:,:,1,t);
-    image_residual_2_re(:,:,1) = residual_2_filtered(:,:,1,t);
-    image_residual_3_re(:,:,1) = residual_3_filtered(:,:,1,t);
-    image_gaussian_4_re(:,:,1) = gaussian_4_filtered(:,:,1,t);
-    
-    image_reconstructed_frame = frame_list(:,:,1,t) + alpha_0 * image_residual_0_re + alpha_1 * imresize(image_residual_1_re, 2) + ...
-        + alpha_2 * imresize(image_residual_2_re, 4) + alpha_3 * imresize(image_residual_3_re, [h, w]) + alpha_4 * imresize(image_gaussian_4_re, [h, w]);
-    
-    frame_list_reconstructed(:,:,1,t) = image_reconstructed_frame(:,:,1);
- 
-end
-
-frame_list_reconstructed(:,:,2:ch,:) = frame_list(:,:,2:ch,:);
+im_hsv = rgb2hsv(im_rgb);
+im_s1 = im_hsv(:, :, 1);
+im_s2 = im_hsv(:, :, 2)/0.25;
+im_s3 = im_hsv(:, :, 3);
 ```
 
 ```matlab
-for t = 1: frame_num
-    frame_list_reconstructed(:,:,1,t) = imadjust(frame_list_reconstructed(:,:,1,t), stretchlim(frame_list_reconstructed(:,:,1,t)));
+for y = 1:(imh-1)
+    for x = 1:(imw-1)
+        e = e + 1;
+        A(e, im2var(y,x+1))=1; 
+        A(e, im2var(y,x))=-1; 
+        b(e) = im_s2(y,x+1)-im_s2(y,x);
+    end
+end
 
-    cube_frame(:,:,:) = frame_list_reconstructed(:,:,:,t);
+for y = 1:(imh-1)
+    for x = 1:(imw-1)
+        e = e + 1;
+        A(e, im2var(y+1,x))=1; 
+        A(e, im2var(y,x))=-1; 
+        b(e) = im_s2(y+1,x)-im_s2(y,x);
+    end
+end
 
-    % YIQ to RGB
-    cube_frame = ntsc2rgb(cube_frame);
+e = e + 1;
+A(e, im2var(1,1)) = 1;
+b(e) = im_s3(1, 1);
+im_out = A\b';
+im_out = vec2mat(im_out, imh);
+im_out = im_out';
 
-    writeVideo(v,cube_frame);
 end
 ```
 
