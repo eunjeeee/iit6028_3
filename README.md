@@ -5,7 +5,7 @@
   2021314078 배은지
 </p>
 
-과제 설명
+$$v=\underset{v}{argmax}\sum ((v_i-v_j)-(s_i-s_j))^2+\sum ((v_i-t_j)-(s_i-s_j))^2$$
 
 ### TOY PROBLEM
 - Load the video file
