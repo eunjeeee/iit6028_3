@@ -1,5 +1,5 @@
 # Homework Assignment 3 
-### Implement Poisson Belending
+## Implement Poisson Belending
 
 <p align='right'>
   2021314078 배은지
@@ -10,7 +10,7 @@ Poisson blending은 아래 수식을 통해 공식화 할 수 있다.
 
 <img src="http://latex.codecogs.com/png.latex?\dpi{150}\bg_white  {v=\underset{v}{argmax}\sum ((v_i-v_j)-(s_i-s_j))^2+\sum ((v_i-t_j)-(s_i-s_j))^2}"/>
 
-### TOY PROBLEM
+## TOY PROBLEM
 먼저 gradient domain processing 을 구현하였다.
 이미지 s의 x와 y 그래디언트를 계산한 후 이 값들을 이용해 이미지 v를 재구성하였을 때, 재구성된 이미지와 원본 이미지가 일치하기를 원한다.
 이를 위해 다음과 같은 과정을 진행하였다.
@@ -69,7 +69,7 @@ im_out = reshape(v, imh, imw);
   <img src='./result/1.PNG' width="300px">
 </p>
 
-### POISSON BLENDING
+## POISSON BLENDING
 다음으로 poisson blending 시킨 결과를 보고자 하였다.
 여기에는 세가지 과정이 필요하다.
 1. 합성될 이미지에서의 영역 경계 선택 및 배경이 될 이미지에서의 위치 지정
@@ -106,7 +106,7 @@ im_blend = reshape(v, [imh, imw, nn]);
   <img src='./result/22.PNG' width="800px">
 </p>
 
-### BLENDING WITH MIXED GRADIENTS
+## BLENDING WITH MIXED GRADIENTS
 이 과정에서는 Poisson blending과 거의 동일하지만, 이미지들의 gradient를 더 큰 magnitude로 사용하여 최소 제곱 문제를 해결하고자 하였다.
 여기서 d_ij는 gradients 중 magnitude가 가장 큰 값이다.
 ```matlab
@@ -144,7 +144,7 @@ im_blend(:,:,:) = min(1, im_blend(:,:,:));
   <img src='./result/3.PNG' width="700px">
 </p>
 
-### YOUR OWN EXAMPLES
+## YOUR OWN EXAMPLES
 성공 사례
 <p align='center'>
   <img src='./result/4_1.PNG' width="800px">
@@ -155,7 +155,7 @@ im_blend(:,:,:) = min(1, im_blend(:,:,:));
 </p>
 
 
-### BONUS: IMPLEMENT A DIFFERENT GRADIENT-DOMAIN PROCESSING ALGORITHM
+## BONUS: IMPLEMENT A DIFFERENT GRADIENT-DOMAIN PROCESSING ALGORITHM
 칼라 이미지를 흑백 스케일로 변환할 때, 데이터가 손상될 가능성이 높다.
 
 예로써 아래 colorBlindTest용 이미지를 가지고 `rgb2gray` 한 결과와 비교해보았다.
