@@ -66,8 +66,10 @@ im_out = reshape(v, imh, imw);
 ```
 수식 `num2str(sqrt(sum(toyim(:)-im_out(:))))`을 통해 에러 값을 출력한 결과, 에러 값은 `0+2.5417e-06i` 이므로 재구성한 이미지와 원본 이미지는 동일하다고 볼 수 있다.
 <p align='center'>
-  <img src='./image/2.PNG' width="400px">
-  <img src='./image/1.PNG' width="600px">
+  <img src='./result/toy_problem.png' width="100px">
+  <figcaption>원본 이미지</figcaption>
+  <img src='./result/toy_result.png' width="100px">
+  <figcaption>재구성 이미지</figcaption>
 </p>
 
 ### POISSON BLENDING
