@@ -109,6 +109,7 @@ im_blend = reshape(v, [imh, imw, nn]);
 ## BLENDING WITH MIXED GRADIENTS
 이 과정에서는 Poisson blending과 거의 동일하지만, 이미지들의 gradient를 더 큰 magnitude로 사용하여 최소 제곱 문제를 해결하고자 하였다.
 여기서 d_ij는 gradients 중 magnitude가 가장 큰 값이다.
+<img src="http://latex.codecogs.com/png.latex?\dpi{100}\bg_white  {v=\underset{v}{argmax}\sum ((v_i-v_j)-d_ij)^2+\sum ((v_i-t_j)-d_ij)^2}"/>
 ```matlab
 for y = 1:imh
     for x = 1:imw
