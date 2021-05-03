@@ -76,7 +76,7 @@ im_out = reshape(v, imh, imw);
 2. <img src="http://latex.codecogs.com/png.latex?\dpi{100}\bg_white  {v=\underset{v}{argmax}\sum ((v_i-v_j)-(s_i-s_j))^2+\sum ((v_i-t_j)-(s_i-s_j))^2}"/>
 3. 2번 결과를 이미지로 복사
 
-제공된 getMask, alignSource 함수를 이용하여 1번 과정을 쉽게 할 수 있었으며, 그 이후의 과정을 라플라스 변환을 활용하여 구현하였다.
+제공된 `getMask`, `alignSource` 함수를 이용하여 1번 과정을 쉽게 할 수 있었으며, 그 이후의 과정을 라플라스 변환을 활용하여 구현하였다.
 
 ```matlab
 for y = 1:imh
