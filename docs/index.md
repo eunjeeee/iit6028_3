@@ -145,7 +145,12 @@ im_blend(:,:,:) = min(1, im_blend(:,:,:));
 </p>
 
 ### YOUR OWN EXAMPLES
-
+<p align='center'>
+  <img src='./result/4_1.PNG' width="800px">
+</p>
+<p align='center'>
+  <img src='./result/4_2.PNG' width="800px">
+</p>
 
 
 ### BONUS: IMPLEMENT A DIFFERENT GRADIENT-DOMAIN PROCESSING ALGORITHM
