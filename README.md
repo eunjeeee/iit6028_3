@@ -24,35 +24,48 @@ $$v=\underset{v}{argmax}\sum ((v_i-v_j)-(s_i-s_j))^2+\sum ((v_i-t_j)-(s_i-s_j))^
 
 여기서 A는 sparse matrix, v는 variables , b는 known vector 이다.
 
+먼저 `im2var`을 이용해 픽셀들을 매핑시켰다.
+
 ```matlab
-video = VideoReader('data/baby2.mp4');
-%video = VideoReader('data/face.mp4');
+[imh, imw, nn] = size(toyim);
+im2var = zeros(imh, imw);
+im2var(1:imh*imw) = 1:imh*imw;
 
-Fs = round(video.FrameRate);
-l=video.Duration * video.FrameRate;
-length = round(l);
-h = video.Height;
-w = video.Width;
-ch = video.BitsPerPixel / 8;
-
-frame_list = zeros(h, w, ch, length);
-
-for frame_index = 1: length-1
-    video.CurrentTime = frame_index * 1 / video.FrameRate;
-    frame = readFrame(video);
-    frame = double(frame) / 255;
-    frame = rgb2ntsc(frame);
-    frame_list(:, :, :, frame_index) = frame(:, :, :);
-end
-
-video.CurrentTime = l * 1 / video.FrameRate;
-frame = readFrame(video);
-frame = double(frame) / 255;
-frame = rgb2ntsc(frame);
-frame_list(:, :, :, frame_index) = frame(:, :, :);
-[h, w, ch, frame_num] = size(frame_list);
+A = sparse(((imh*(imw-1))+(imh-1)*imw)+1, imh*imw);
+b = zeros(imh*imw, nn);
+e = 0;
 ```
 
+v와 s의 기울기 차이를 계산하였다.
+
+```matlab
+for x = 1:imh
+    for y = 1:imw-1
+        e = e+1;
+        A(e,im2var(x,y+1)) = 1;
+        A(e,im2var(x,y)) = -1;
+        b(e) = toyim(x,y+1) - toyim(x,y);
+    end
+end
+
+for x = 1:imh-1
+    for y = 1:imw
+        e = e+1;
+        A(e,im2var(x+1,y)) = 1;
+        A(e,im2var(x,y)) = -1;
+        b(e) = toyim(x+1,y) - toyim(x,y);
+    end
+end
+```
+`v = A\b;` 을 이용하여 이미지를 재구성하였다.
+
+```matlab
+A(e+1, im2var(1,1)) = 1;
+b(e+1) = toyim(1,1);
+v = A\b;
+im_out = reshape(v, imh, imw);
+```
+수식 `num2str(sqrt(sum(toyim(:)-im_out(:))))`을 통해 에러 값을 출력한 결과, 에러 값은 `0+2.5417e-06i` 이므로 재구성한 이미지와 원본 이미지는 동일하다고 볼 수 있다.
 <p align='center'>
   <img src='./image/2.PNG' width="400px">
   <img src='./image/1.PNG' width="600px">
@@ -71,6 +84,7 @@ list3 = impyramid(list2, 'reduce');
 list4 = impyramid(list3, 'reduce');
 ```
 <p align='center'>
+  <img src='./image/3.PNG' width="600px">
   <img src='./image/3.PNG' width="600px">
 </p>
 
