@@ -98,9 +98,12 @@ for y = 1:imh
 v = A \ b;
 im_blend = reshape(v, [imh, imw, nn]);
 ```
+한 배경에 각각 다른 펭귄 이미지를 합성한 결과이다.
 <p align='center'>
-  <img src='./image/3.PNG' width="600px">
-  <img src='./image/3.PNG' width="600px">
+  <img src='./result/2.PNG' width="500px">
+</p>
+<p align='center'>
+  <img src='./result/22.PNG' width="800px">
 </p>
 
 ### BLENDING WITH MIXED GRADIENTS
