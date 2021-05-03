@@ -21,7 +21,7 @@ Poisson blending은 아래 수식을 통해 공식화 할 수 있다.
 
 이를 하나의 최소 제곱 문제 <img src="http://latex.codecogs.com/png.latex?\dpi{100}\bg_white  {(Av-b)^2}"/> 로 결합한다.
 
-여기서 A는 sparse matrix, v는 variables , b는 known vector 이다.
+여기서 A는 `sparse matrix`, v는 `variables` , b는 `known vector` 이다.
 
 먼저 `im2var`을 이용해 픽셀들을 매핑시켰다.
 
