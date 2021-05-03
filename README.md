@@ -72,16 +72,33 @@ im_out = reshape(v, imh, imw);
 </p>
 
 ### POISSON BLENDING
-- 모든 단일 프레임에 대해 laplacian pyramid 구성
-- gaussian pyramid에서의 차이를 이용
-- w × h → (w/2) × (h/2) 이기 때문에 차이를 계산할 때 upsampling 요구
-- 이 과정을 역으로 수행하면 원본 이미지로 재구성할 수 있음 → 비디오 보강에 활용 가능
+다음으로 poisson blending 시킨 결과를 보고자 하였다.
+여기에는 세가지 과정이 필요하다.
+1. 합성될 이미지에서의 영역 경계 선택 및 배경이 될 이미지에서의 위치 지정
+2. $v=\underset{v}{argmax}\sum ((v_i-v_j)-(s_i-s_j))^2+\sum ((v_i-t_j)-(s_i-s_j))^2$ 공식화
+3. 2번 결과를 이미지로 복사
+
+제공된 getMask, alignSource 함수를 이용하여 1번 과정을 쉽게 할 수 있었으며, 그 이후의 과정을 라플라스 변환을 활용하여 구현하였다.
 
 ```matlab
-list1 = impyramid(frame_list, 'reduce');
-list2 = impyramid(list1, 'reduce');
-list3 = impyramid(list2, 'reduce');
-list4 = impyramid(list3, 'reduce');
+for y = 1:imh
+    for x = 1:imw
+        e = e+1;
+        if mask_s(y,x) == 1
+            A(e, im2var(y,x)) = 4;
+            A(e, im2var(y,x-1)) = -1;
+            A(e, im2var(y,x+1)) = -1;
+            A(e, im2var(y-1,x)) = -1;
+            A(e, im2var(y+1,x)) = -1;
+            b(e,:) = 4*im_s(y,x,:) - im_s(y,x+1,:) - im_s(y,x-1,:) - im_s(y-1,x,:) - im_s(y+1,x,:);
+        else
+            A(e, im2var(y,x)) = 1;
+            b(e,:) = im_background(y,x,:);
+        end
+    end
+
+v = A \ b;
+im_blend = reshape(v, [imh, imw, nn]);
 ```
 <p align='center'>
   <img src='./image/3.PNG' width="600px">
