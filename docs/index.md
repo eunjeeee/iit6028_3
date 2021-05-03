@@ -103,7 +103,7 @@ im_blend = reshape(v, [imh, imw, nn]);
   <img src='./result/2.PNG' width="500px">
 </p>
 <p align='center'>
-  <img src='./result/22.PNG' width="800px">
+  <img src='./result/22.PNG' width="900px">
 </p>
 
 ## BLENDING WITH MIXED GRADIENTS
@@ -147,11 +147,11 @@ im_blend(:,:,:) = min(1, im_blend(:,:,:));
 ## YOUR OWN EXAMPLES
 성공 사례
 <p align='center'>
-  <img src='./result/4_1.PNG' width="800px">
+  <img src='./result/4_1.PNG' width="900px">
 </p>
 실패 사례
 <p align='center'>
-  <img src='./result/4_2.PNG' width="800px">
+  <img src='./result/4_2.PNG' width="900px">
 </p>
 
 
